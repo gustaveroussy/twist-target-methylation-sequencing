@@ -1,3 +1,4 @@
+#!/usr/bin/env shell
 set -e
 
 find ../workflow -type f -name "*.smk" | while read SNAKEFILE; do
