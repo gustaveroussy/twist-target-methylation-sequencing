@@ -11,10 +11,10 @@ rule bwameth_index:
         runtime=lambda wildcards, attempt: (attempt * 60) + 90,
         tmpdir=tmpdir,
     log:
-        "logs/bwameth/mapping/{sample}.log"
+        "logs/bwameth/mapping/{sample}.log",
     params:
         extra="--read-group '@RG\{sample}:1\tPL:illumina\tLB:{sample}\tSM:{sample}'",
     conda:
         "../../envs/bwameth.yaml"
     shell:
-        "bwameth.py --reference {input.idx} -t {threads} {params.extra} {r1} {r2} > {log} 2>&1"
+        "bwameth.py --reference {input.idx} -t {threads} {params.extra} {input.r1} {input.r2} > {log} 2>&1"

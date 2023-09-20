@@ -1,10 +1,13 @@
+import os
 import pandas
 import snakemake
 
 from typing import Any, Dict, List, Union
 
 if config == {}:
+
     configfile: "config/config.yaml"
+
 
 design_path = config.get("design", "config/desig.tsv")
 design: pandas.DataFrame = pandas.read_csv(
@@ -13,8 +16,9 @@ design: pandas.DataFrame = pandas.read_csv(
     header=0,
     index_col=0,
 )
-design["Sample_id"] = desig.index.tolist()
+design["Sample_id"] = design.index.tolist()
 
+tmpdir = os.environ.get("tmp", "tmp")
 snakemake_wrappers_version: str = "v2.6.0"
 
 ################################
@@ -31,7 +35,9 @@ fasta_index_path: str = f"reference/{species}.{build}.{release}.fasta.fai"
 fasta_dict_path: str = f"reference/{species}.{build}.{release}.dict"
 
 
-def get_picard_bed_to_interval_list_input(wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config) -> Dict[str, str]:
+def get_picard_bed_to_interval_list_input(
+    wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config
+) -> Dict[str, str]:
     """
     Return path to expected interval list and sequence dictionary
     """
@@ -41,7 +47,9 @@ def get_picard_bed_to_interval_list_input(wildcards: snakemake.io.Wildcards, con
     }
 
 
-def get_fastq_trim_galore_input(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> List[str]:
+def get_fastq_trim_galore_input(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> List[str]:
     """
     Return list of expected fastq files
     """
@@ -51,17 +59,21 @@ def get_fastq_trim_galore_input(wildcards: snakemake.io.Wildcards, design: panda
     ]
 
 
-def get_fastq_seqkit_input(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> List[str]:
+def get_fastq_seqkit_input(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> List[str]:
     """
     Return expected fastq file
     """
     if str(wildcards.stream).lower() == "r1":
         return design["Upstream_file"].loc[wildcards.sample]
-    
+
     return design["Downstream_file"].loc[wildcards.sample]
 
 
-def get_methylation_targets(config: Dict[str, Any] = config) -> Dict[str, Union[str, List[str]]]:
+def get_methylation_targets(
+    config: Dict[str, Any] = config
+) -> Dict[str, Union[str, List[str]]]:
     """
     Return methylation analysis results
     """
@@ -71,32 +83,30 @@ def get_methylation_targets(config: Dict[str, Any] = config) -> Dict[str, Union[
         expected_targets["fasta"] = fasta_path
         expected_targets["fasta_index"] = fasta_index_path
         expected_targets["fasta_dict"] = fasta_dict_path
-    
+
     if steps.get("mapping", False):
         expected_targets["mapped"] = expand(
-            "picard/markduplicates/{sample}.bam",
-            sample=design.Sample_id
+            "picard/markduplicates/{sample}.bam", sample=design.Sample_id
         )
         expected_targets["QC"] = "multiqc/QC/Report.html"
 
     if steps.get("calling", False):
         expected_targets["meth_mbias"] = expand(
-            "methylome/QC/{sample}",
-            sample=design.Sample_id
+            "methylome/QC/{sample}", sample=design.Sample_id
         )
         expected_targets["meth_extract"] = expand(
-            "methylome/extract/{sample}",
-            sample=design.Sample_id
+            "methylome/extract/{sample}", sample=design.Sample_id
         )
         expected_targets["meth_report"] = expand(
-            "methylome/report/{sample}",
-            sample=design.Sample_id
+            "methylome/report/{sample}", sample=design.Sample_id
         )
 
     return expected_targets
 
 
-def get_subsampling_targets(config: Dict[str, Any] = config) -> Dict[str, Union[str, List[str]]]:
+def get_subsampling_targets(
+    config: Dict[str, Any] = config
+) -> Dict[str, Union[str, List[str]]]:
     """
     Return subsampling results
     """

@@ -4,7 +4,7 @@ rule trim_galore:
             "data_input/{sample}.{stream}.fq.gz",
             stream=["R1", "R2"],
             allow_missing=True,
-        )
+        ),
     output:
         fasta_fwd=temp("trim_galore/reads/{sample}_R1.fq.gz"),
         report_fwd=temp("trim_galore/reports/{sample}_R1_trimming_report.txt"),

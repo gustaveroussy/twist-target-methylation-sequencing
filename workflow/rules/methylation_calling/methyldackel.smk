@@ -5,14 +5,14 @@ rule methyldackel_mbias:
         fasta_dict=fasta_dict_path,
         bam="picard/markduplicates/{sample}.bam",
     output:
-        directory("methylome/QC/{sample}")
+        directory("methylome/QC/{sample}"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: (attempt * 5 * 1024) + (1024 * 45),
         runtime=lambda wildcards, attempt: (attempt * 60) + 90,
         tmpdir=tmpdir,
     log:
-        "logs/methyldackel/mbias/{sample}.log"
+        "logs/methyldackel/mbias/{sample}.log",
     params:
         extra="",
     conda:
@@ -28,14 +28,14 @@ rule methyldackel_extract:
         fasta_dict=fasta_dict_path,
         bam="picard/markduplicates/{sample}.bam",
     output:
-        directory("methylome/extract/{sample}")
+        directory("methylome/extract/{sample}"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: (attempt * 5 * 1024) + (1024 * 45),
         runtime=lambda wildcards, attempt: (attempt * 60) + 90,
         tmpdir=tmpdir,
     log:
-        "logs/methyldackel/extract/{sample}.log"
+        "logs/methyldackel/extract/{sample}.log",
     params:
         extra="--minDepth 10 --maxVariantFrac 0.25 --OT X,X,X,X --OB X,X,X,X --mergeContext",
     conda:
@@ -51,14 +51,14 @@ rule methyldackel_report:
         fasta_dict=fasta_dict_path,
         bam="picard/markduplicates/{sample}.bam",
     output:
-        directory("methylome/report/{sample}")
+        directory("methylome/report/{sample}"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: (attempt * 5 * 1024) + (1024 * 45),
         runtime=lambda wildcards, attempt: (attempt * 60) + 90,
         tmpdir=tmpdir,
     log:
-        "logs/methyldackel/report/{sample}.log"
+        "logs/methyldackel/report/{sample}.log",
     params:
         extra="--minDepth 10 --maxVariantFrac 0.25 --OT 0,0,0,98 --OB 0,0,3,0 --cytosine_report --CHH --CHG",
     conda:

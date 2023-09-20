@@ -10,7 +10,7 @@ rule multiqc:
                 ".gc_bias.detail_metrics",
                 ".gc_bias.summary_metrics",
                 ".gc_bias.pdf",
-            ]
+            ],
         ),
         expand(
             "picard/collecthsmetrics/hs_metrics/{sample}.txt",
@@ -33,13 +33,13 @@ rule multiqc:
         ),
         expand(
             "picard/metrics/{sample}.metrics.txt",
-            sample=desig.Sample_id,
-        )
+            sample=design.Sample_id,
+        ),
     output:
-        "multiqc/QC/Report.html"
+        "multiqc/QC/Report.html",
     params:
-        extra=""
+        extra="",
     log:
-        "logs/multiqc.log"
+        "logs/multiqc.log",
     wrapper:
         f"{snakemake_wrappers_version}/bio/multiqc"

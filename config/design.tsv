@@ -1,0 +1,5 @@
+Sample_id	Upstream_file	Downstream_file
+S1	S1.R1.fq.gz	S1.R2.fq.gz
+S2	S2.R1.fq.gz	S2.R2.fq.gz
+S3	S3.R1.fq.gz	S3.R2.fq.gz
+S4	S4.R1.fq.gz	S4.R2.fq.gz

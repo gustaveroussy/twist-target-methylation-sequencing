@@ -45,17 +45,23 @@ include: "rules/mapping/samtools_index.smk"
 # Mapping QC
 #
 # This snakefile contains rules to
-include: "rules/mapping/picard_metrics.smk"
+include: "rules/quality_controls/picard_metrics.smk"
 #
 # Methylation analysis
 # 
 # Infer original panel in case of missing data
 include: "rules/panel/infer_panel.smk"
 # Format panel in picard-readable intervals
-include: "rules/panel_interval.smk"
+include: "rules/panel/panel_interval.smk"
 # Call for methylations
 include: "rules/methylation_calling/methyldackel.smk"
+#
+# QC Report
+#
+# This snakefile contains QC report aggregation
+include: "rules/quality_controls/multiqc.smk"
 
 
 rule target:
     input:
+        unpack(get_methylation_targets)

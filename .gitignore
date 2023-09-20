@@ -1,3 +1,8 @@
+# Testing files
+tests/config
+tests/*.fq.gz
+tests/.snakemake
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

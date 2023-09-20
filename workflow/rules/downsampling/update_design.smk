@@ -25,8 +25,6 @@ rule cat_seq_info:
         "cat {input.panel} >> {output} 2>> {log} && "
         "echo {params.echo_sample} >> {output} 2>> {log} && "
         "cat {input.sample_size} >> {output} 2>> {log} "
-    
-
 
 
 rule update_design:
@@ -43,7 +41,7 @@ rule update_design:
     log:
         "logs/update_design.log",
     params:
-        design=design.copy()
+        design=design.copy(),
     conda:
         "../../envs/python.yaml"
     script:

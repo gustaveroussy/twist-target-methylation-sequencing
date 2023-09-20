@@ -9,9 +9,9 @@ rule awk_merged_probe_fingerprint_size:
         runtime=lambda wildcards, attempt: attempt * 30,
         tmpdir=tmpdir,
     log:
-        "logs/awk/merged_probe_fingerprint_size.log"
+        "logs/awk/merged_probe_fingerprint_size.log",
     params:
-        script=workflow.source_path("../../scripts/panel_size.awk")
+        script=workflow.source_path("../../scripts/panel_size.awk"),
     conda:
         "../../envs/awk.yaml"
     shell:

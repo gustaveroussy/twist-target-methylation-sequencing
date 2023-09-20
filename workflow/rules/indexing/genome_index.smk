@@ -1,6 +1,6 @@
 rule samtools_faidx:
     input:
-        "reference/{species}.{build}.{release}.fasta"
+        "reference/{species}.{build}.{release}.fasta",
     output:
         temp("reference/{species}.{build}.{release}.fasta.fai"),
     threads: 1
@@ -18,7 +18,7 @@ rule samtools_faidx:
 
 rule create_dict:
     input:
-        "reference/{species}.{build}.{release}.fasta"
+        "reference/{species}.{build}.{release}.fasta",
     output:
         temp("reference/{species}.{build}.{release}.dict"),
     threads: 1

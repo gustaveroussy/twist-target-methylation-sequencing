@@ -1,6 +1,6 @@
 rule picard_bed_to_interval_list:
     input:
-        unpack(get_picard_bed_to_interval_list_input)
+        unpack(get_picard_bed_to_interval_list_input),
     output:
         temp("picard/bedtointervallist/target.intervals"),
     threads: 1
@@ -27,7 +27,7 @@ rule rsync_target_to_bait:
         runtime=lambda wildcards, attempt: attempt * 30,
         tmpdir=tmpdir,
     log:
-        "logs/rsync/target_to_bait.log"
+        "logs/rsync/target_to_bait.log",
     params:
         extra="-cvrhP",
     conda:

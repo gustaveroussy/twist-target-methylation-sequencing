@@ -9,7 +9,7 @@ rule sambamba_sort:
         runtime=lambda wildcards, attempt: attempt * 30 + 20,
         tmpdir=tmpdir,
     params:
-        ""
+        "",
     log:
         "logs/sambamba/sort/{sample}.log",
     wrapper:

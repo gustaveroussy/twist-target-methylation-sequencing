@@ -6,6 +6,7 @@ import yaml
 
 from typing import Dict, Union
 
+
 def load_nb(path: str) -> int:
     """
     Return read number given in provided file path
@@ -17,28 +18,22 @@ def load_nb(path: str) -> int:
 design: pandas.DataFrame() = snakemake.params["design"]
 
 design.to_csv(
-    path_or_buf=snakemake.output.design_backup, 
-    sep="\t", 
-    header=True, 
-    index=False
+    path_or_buf=snakemake.output.design_backup, sep="\t", header=True, index=False
 )
 
 panel: Dict[str, Union[int, Dict[str, int]]] = load_nb(snakemake.input[0])
 
 design["Subsampling"] = [
     int(
-        (
-            design["panel"]["size"] * 250
-        ) / (
-            panel["samples"][sample]["mean_read_length"] * panel["samples"][sample]["nb_reads"]
+        (design["panel"]["size"] * 250)
+        / (
+            panel["samples"][sample]["mean_read_length"]
+            * panel["samples"][sample]["nb_reads"]
         )
     )
     for sample in design.Sample_id
 ]
 
 design.to_csv(
-    path_or_buf=snakemake.output.design_updated,
-    sep="\t",
-    header=True,
-    index=False
+    path_or_buf=snakemake.output.design_updated, sep="\t", header=True, index=False
 )

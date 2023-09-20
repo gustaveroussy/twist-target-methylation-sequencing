@@ -10,10 +10,9 @@ rule get_genome:
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
         runtime=lambda wildcards, attempt: attempt * 60 * 24,
-        tmpdir=tmp,
+        tmpdir=tmpdir,
     log:
         "logs/reference/sequence/{species}.{build}.{release}.log",
     cache: "omit-software"
     wrapper:
         f"{snakemake_wrappers_version}/bio/reference/ensembl-sequence"
-

@@ -3,15 +3,17 @@ rule picard_collect_multiple_metrics:
         ref=fasta_path,
         bam="picard/markduplicates/{sample}.bam",
     output:
-        temp(multiext(
-            "picard/collectmultiplemetrics/{sample}",
-            ".alignment_summary_metrics",
-            ".insert_size_metrics",
-            ".insert_size_histogram.pdf",
-            ".gc_bias.detail_metrics",
-            ".gc_bias.summary_metrics",
-            ".gc_bias.pdf",
-        )),
+        temp(
+            multiext(
+                "picard/collectmultiplemetrics/{sample}",
+                ".alignment_summary_metrics",
+                ".insert_size_metrics",
+                ".insert_size_histogram.pdf",
+                ".gc_bias.detail_metrics",
+                ".gc_bias.summary_metrics",
+                ".gc_bias.pdf",
+            )
+        ),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 + 1024 * 3,

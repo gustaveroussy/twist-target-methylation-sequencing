@@ -1,6 +1,6 @@
 rule samtools_index:
     input:
-        "{tool}/{subcommand}/{sample}.sorted.bam"
+        "{tool}/{subcommand}/{sample}.sorted.bam",
     output:
         temp("{tool}/{subcommand}/{sample}.sorted.bam.bai"),
     threads: config.get("max_threads", 10)
@@ -9,7 +9,7 @@ rule samtools_index:
         runtime=lambda wildcards, attempt: attempt * 30 + 20,
         tmpdir=tmpdir,
     log:
-        "logs/samtools/index/{sample}.log",
+        "logs/samtools/index/{tool}.{subcommand}.{sample}.log",
     params:
         extra="",
     wrapper:
