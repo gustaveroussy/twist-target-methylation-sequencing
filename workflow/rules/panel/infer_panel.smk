@@ -16,4 +16,4 @@ rule bedtools_merge:
     params:
         extra=""
     wrapper:
-        "v2.6.0/bio/bedtools/merge"
+        f"{snakemake_wrappers_version}/bio/bedtools/merge"

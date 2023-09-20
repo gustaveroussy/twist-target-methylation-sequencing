@@ -13,4 +13,4 @@ rule samtools_index:
     params:
         extra="",
     wrapper:
-        "v2.6.0/bio/samtools/index"
+        f"{snakemake_wrappers_version}/bio/samtools/index"

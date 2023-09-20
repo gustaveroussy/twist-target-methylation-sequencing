@@ -1,62 +1,34 @@
 import pandas
 import snakemake
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 
-def get_panel(config: Dict[str, Any] = config):
-    """
-    Return path to panel if provided, else return path to
-    inferred panel from bam files.
-    """
-    return config.get("resources", {}).get("panel") or "panel/mapped.bed"
+if config == {}:
+    configfile: "config/config.yaml"
 
+design_path = config.get("design", "config/desig.tsv")
+design: pandas.DataFrame = pandas.read_csv(
+    filepath_or_buffer=design_path,
+    sep="\t",
+    header=0,
+    index_col=0,
+)
+design["Sample_id"] = desig.index.tolist()
 
-def get_fasta(config: Dict[str, Any] = config) -> str:
-    """
-    Return path to provided fasta file, if any.
-    Else, return path to downloaded fasta file.
-    """
-    species: str = config.get("reference", {}).get("species", "homo_sapiens")
-    build: str = config.get("reference", {}).get("build", "GRCh38")
-    release: str = config.get("reference", {}).get("release", "109")
+snakemake_wrappers_version: str = "v2.6.0"
 
-    return config.get("resources", {}).get("fasta") or f"reference/{species}.{build}.{release}.fasta"
+################################
+### Paths to reference files ###
+################################
 
+# Main genome informations
+species: str = config.get("reference", {}).get("species", "homo_sapiens")
+build: str = config.get("reference", {}).get("build", "GRCh38")
+release: str = config.get("reference", {}).get("release", "109")
 
-def get_fai(config: Dict[str, Any] = config) -> str:
-    """
-    Return path to provided fasta file, if any.
-    Else, return path to index of downloaded fasta file.
-    """
-    species: str = config.get("reference", {}).get("species", "homo_sapiens")
-    build: str = config.get("reference", {}).get("build", "GRCh38")
-    release: str = config.get("reference", {}).get("release", "109")
-
-    return config.get("resources", {}).get("fasta_fai") or f"reference/{species}.{build}.{release}.fasta.fai"
-
-
-def get_fasta_dict(config: Dict[str, Any] = config) -> str:
-    """
-    Return path to provided fasta file, if any.
-    Else, return path to index of downloaded fasta file.
-    """
-    species: str = config.get("reference", {}).get("species", "homo_sapiens")
-    build: str = config.get("reference", {}).get("build", "GRCh38")
-    release: str = config.get("reference", {}).get("release", "109")
-
-    return config.get("resources", {}).get("fasta_dict") or f"reference/{species}.{build}.{release}.dict"
-
-
-
-def get_fastq(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> str:
-    """
-    Return path to expected fastq file
-    """
-    if "stream" in wildcards.keys():
-        if str(wildcards.stream).lower() == "r2":
-            return design["Downstream_file"].loc[wildcards.sample]
-    
-    return design["Upstream_file"].loc[wildcards.sample]
+fasta_path: str = f"reference/{species}.{build}.{release}.fasta"
+fasta_index_path: str = f"reference/{species}.{build}.{release}.fasta.fai"
+fasta_dict_path: str = f"reference/{species}.{build}.{release}.dict"
 
 
 def get_picard_bed_to_interval_list_input(wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config) -> Dict[str, str]:
@@ -64,35 +36,12 @@ def get_picard_bed_to_interval_list_input(wildcards: snakemake.io.Wildcards, con
     Return path to expected interval list and sequence dictionary
     """
     return {
-        "bed": get_panel(config),
-        "dict": get_fasta_dict(config),
+        "bed": config.get("resources", {}).get("panel") or "panel/mapped.bed",
+        "dict": fasta_dict_path,
     }
 
 
-def get_picard_collect_multiple_metrics_input(wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config) -> Dict[str, str]:
-    """
-    Return path to expected fasta genome sequence and bam mapped reads
-    """
-    return {
-        "ref": get_fasta(config),
-        "bam": "picard/markduplicates/{sample}.bam",
-    }
-
-
-def get_picard_collect_hs_metrics_input(wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config) -> Dict[str, str]:
-    """
-    Return path to expected fasta genome sequence, bam mapped reads, and intervals
-    """
-    paths = get_picard_collect_multiple_metrics_input(wildcards, config)
-    paths.update(**{
-        "bait_intervals": "picard/bedtointervallist/bait.intervals",
-        "target_intervals": "picard/bedtointervallist/target.intervals",
-    })
-    
-    return paths
-
-
-def get_fastq_trim_galore(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> List[str]:
+def get_fastq_trim_galore_input(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> List[str]:
     """
     Return list of expected fastq files
     """
@@ -101,12 +50,54 @@ def get_fastq_trim_galore(wildcards: snakemake.io.Wildcards, design: pandas.Data
         design["Downstream_file"].loc[wildcards.sample],
     ]
 
-def get_methyldackel_mbias_input(wildcards: snakemake.io.Wildcards, config: Dict[str, Any]) -> Dict[str, str]:
+
+def get_fastq_seqkit_input(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> List[str]:
     """
-    Return path to genome fasta sequence and bam mapped reads.
+    Return expected fastq file
     """
-    return {
-        "fasta": get_fasta(config),
-        "fai": get_fai(config),
-        "bam": "picard/markduplicates/{sample}.bam",
-    }
+    if str(wildcards.stream).lower() == "r1":
+        return design["Upstream_file"].loc[wildcards.sample]
+    
+    return design["Downstream_file"].loc[wildcards.sample]
+
+
+def get_methylation_targets(config: Dict[str, Any] = config) -> Dict[str, Union[str, List[str]]]:
+    """
+    Return methylation analysis results
+    """
+    expected_targets = {}
+    steps = config.get("steps", {"install": False, "mapping": True})
+    if steps.get("install", False):
+        expected_targets["fasta"] = fasta_path
+        expected_targets["fasta_index"] = fasta_index_path
+        expected_targets["fasta_dict"] = fasta_dict_path
+    
+    if steps.get("mapping", False):
+        expected_targets["mapped"] = expand(
+            "picard/markduplicates/{sample}.bam",
+            sample=design.Sample_id
+        )
+        expected_targets["QC"] = "multiqc/QC/Report.html"
+
+    if steps.get("calling", False):
+        expected_targets["meth_mbias"] = expand(
+            "methylome/QC/{sample}",
+            sample=design.Sample_id
+        )
+        expected_targets["meth_extract"] = expand(
+            "methylome/extract/{sample}",
+            sample=design.Sample_id
+        )
+        expected_targets["meth_report"] = expand(
+            "methylome/report/{sample}",
+            sample=design.Sample_id
+        )
+
+    return expected_targets
+
+
+def get_subsampling_targets(config: Dict[str, Any] = config) -> Dict[str, Union[str, List[str]]]:
+    """
+    Return subsampling results
+    """
+    pass

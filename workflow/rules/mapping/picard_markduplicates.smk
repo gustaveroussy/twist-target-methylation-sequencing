@@ -4,7 +4,7 @@ rule markduplicates_bam:
         bai="sambamba/sort/{sample}.sorted.bam.bai",
     output:
         bam="picard/markduplicates/{sample}.bam",
-        metrics="picard/metrics/{sample}.metrics.txt",
+        metrics=temp("picard/metrics/{sample}.metrics.txt"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 + 1024 * 3,
@@ -20,4 +20,4 @@ rule markduplicates_bam:
             "--OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500"
         ),
     wrapper:
-        "v2.6.0/bio/picard/markduplicates"
+        f"{snakemake_wrappers_version}/bio/picard/markduplicates"

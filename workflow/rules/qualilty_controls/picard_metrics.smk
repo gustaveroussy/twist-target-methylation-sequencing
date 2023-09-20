@@ -1,8 +1,9 @@
 rule picard_collect_multiple_metrics:
     input:
-        unpack(get_picard_collect_multiple_metrics_input)
+        ref=fasta_path,
+        bam="picard/markduplicates/{sample}.bam",
     output:
-        multiext(
+        temp(multiext(
             "picard/collectmultiplemetrics/{sample}",
             ".alignment_summary_metrics",
             ".insert_size_metrics",
@@ -10,7 +11,7 @@ rule picard_collect_multiple_metrics:
             ".gc_bias.detail_metrics",
             ".gc_bias.summary_metrics",
             ".gc_bias.pdf",
-        ),
+        )),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 + 1024 * 3,
@@ -21,14 +22,17 @@ rule picard_collect_multiple_metrics:
     params:
         extra="--VALIDATION_STRINGENCY LENIENT",
     wrapper:
-        "v2.6.0/bio/picard/collectmultiplemetrics"
+        f"{snakemake_wrappers_version}/bio/picard/collectmultiplemetrics"
 
 
 rule picard_collect_hs_metrics:
     input:
-        unpack(get_picard_collect_hs_metrics_input)
+        ref=fasta_path,
+        bam="picard/markduplicates/{sample}.bam",
+        bait_intervals="picard/bedtointervallist/bait.intervals",
+        target_intervals="picard/bedtointervallist/target.intervals",
     output:
-        "picard/collecthsmetrics/hs_metrics/{sample}.txt",
+        temp("picard/collecthsmetrics/hs_metrics/{sample}.txt"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 + 1024 * 3,
@@ -39,4 +43,4 @@ rule picard_collect_hs_metrics:
     log:
         "logs/picard_collect_hs_metrics/{sample}.log",
     wrapper:
-        "v2.6.0/bio/picard/collecthsmetrics"
+        f"{snakemake_wrappers_version}/bio/picard/collecthsmetrics"

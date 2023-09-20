@@ -20,4 +20,4 @@ rule sambamba_view:
     log:
         "logs/sambamba-view/{sample}.log"
     wrapper:
-        "v2.6.0/bio/sambamba/view"
+        f"{snakemake_wrappers_version}/bio/sambamba/view"

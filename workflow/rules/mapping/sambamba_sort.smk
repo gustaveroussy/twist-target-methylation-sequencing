@@ -13,4 +13,4 @@ rule sambamba_sort:
     log:
         "logs/sambamba/sort/{sample}.log",
     wrapper:
-        "v2.6.0/bio/sambamba/sort"
+        f"{snakemake_wrappers_version}/bio/sambamba/sort"

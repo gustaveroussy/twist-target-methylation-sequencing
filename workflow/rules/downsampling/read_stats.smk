@@ -11,4 +11,8 @@ rule rust_fastq_stats:
     log:
         "logs/rust-bio/fastq_stats/{sample}.log"
     params:
-        
+        ""
+    conda:
+        "../../rust.yaml"
+    script:
+        "../../scripts/downsampling/fastq_stats.rs"

@@ -1,0 +1,13 @@
+design: "config/design.tsv"
+max_threads: 20
+
+steps:
+  install: false
+  mapping: true
+  calling: true
+
+reference:
+  species: homo_sapiens
+  release: "109"
+  build: GRCh38
+  # fasta: Optional path to fasta file, if missing, the fasta file will be downloaded

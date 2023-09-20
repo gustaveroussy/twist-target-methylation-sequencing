@@ -2,7 +2,7 @@ rule samtools_faidx:
     input:
         "reference/{species}.{build}.{release}.fasta"
     output:
-        "reference/{species}.{build}.{release}.fasta.fai",
+        temp("reference/{species}.{build}.{release}.fasta.fai"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 + 1024 * 3,
@@ -13,14 +13,14 @@ rule samtools_faidx:
     params:
         extra="",
     wrapper:
-        "v2.6.0/bio/samtools/faidx"
+        f"{snakemake_wrappers_version}/bio/samtools/faidx"
 
 
 rule create_dict:
     input:
         "reference/{species}.{build}.{release}.fasta"
     output:
-        "reference/{species}.{build}.{release}.dict"
+        temp("reference/{species}.{build}.{release}.dict"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 + 1024 * 3,
@@ -31,4 +31,4 @@ rule create_dict:
     params:
         extra="",
     wrapper:
-        "v2.6.0/bio/picard/createsequencedictionary"
+        f"{snakemake_wrappers_version}/bio/picard/createsequencedictionary"

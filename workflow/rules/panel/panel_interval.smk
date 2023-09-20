@@ -13,14 +13,14 @@ rule picard_bed_to_interval_list:
     params:
         extra="--SORT true",
     wrapper:
-        "v2.6.0/bio/picard/bedtointervallist"
+        f"{snakemake_wrappers_version}/bio/picard/bedtointervallist"
 
 
 rule rsync_target_to_bait:
     input:
         "picard/bedtointervallist/target.intervals",
     output:
-        "picard/bedtointervallist/bait.intervals",
+        temp("picard/bedtointervallist/bait.intervals"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 + 1024,

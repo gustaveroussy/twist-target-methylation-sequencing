@@ -1,0 +1,61 @@
+# This Snakefile contains Python functions, wildcards constraints,
+# global variables definitions, configuration parsing and testing,
+# experimental-design parsing and testing, and target definitions.
+include: "rules/common.smk"
+#
+# Indeing and pre-processing
+#
+# This snakefile contains rule to rename fastq files,
+# concatenate fastq files if a single sample is split
+# into multiple files (e.g. resequencings), and
+# retrieve them from iRODS if and only if we are on the
+# flamingo cluster at Gustave Roussy
+include: "rules/indexing/rename.smk"
+# This snakefile contains rules to get genome sequences
+# and obtain sequences index and dictionnary
+if config.get("reference", {}).get("fasta"):
+    include: "rules/reference/link_reference.smk"
+else:
+    include: "rules/reference/download_genome_sequence.smk"
+# This snakefile contains rules to index genome with bwameth
+include: "rules/indexing/bwa_meth.smk"
+# This snakefile contains rules to index genome
+include: "rules/indexing/genome_index.smk"
+# 
+# Trimming
+#
+# This snakefile contains rules to perform trimming on raw fastq files
+include: "rules/trimming/trim_galore.smk"
+# This snakefile contains rules to perform QC on fastq files
+include: "rules/quality_controls/fastqc.smk"
+#
+# Mapping
+#
+# This snakefile contains rules to align reads with bwameth
+include: "rules/mapping/bwa_meth.smk"
+# This snakefile contains rules to
+include: "rules/mapping/sambamba_view.smk"
+# This snakefile contains rules to
+include: "rules/mapping/sambamba_sort.smk"
+# This snakefile contains rules to
+include: "rules/mapping/picard_markduplicates.smk"
+# This snakefile contains rules to
+include: "rules/mapping/samtools_index.smk"
+#
+# Mapping QC
+#
+# This snakefile contains rules to
+include: "rules/mapping/picard_metrics.smk"
+#
+# Methylation analysis
+# 
+# Infer original panel in case of missing data
+include: "rules/panel/infer_panel.smk"
+# Format panel in picard-readable intervals
+include: "rules/panel_interval.smk"
+# Call for methylations
+include: "rules/methylation_calling/methyldackel.smk"
+
+
+rule target:
+    input:

@@ -6,7 +6,7 @@ rule cat_seq_info:
             sample=design.Sample_id,
         ),
     output:
-        "panel/complete_data.yaml",
+        temp("panel/complete_data.yaml"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,

@@ -2,8 +2,8 @@ rule fastqc:
     input:
         "trim_galore/reads/{sample}_{stream}.fq.gz"
     output:
-        html="qc/fastqc/{sample}_{stream}.html",
-        zip="qc/fastqc/{sample}_{stream}_fastqc.zip"
+        html=temp("qc/fastqc/{sample}_{stream}.html"),
+        zip=temp("qc/fastqc/{sample}_{stream}_fastqc.zip"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 + 1024 * 3,
@@ -14,4 +14,4 @@ rule fastqc:
     log:
         "logs/fastqc/{sample}.log"
     wrapper:
-        "v2.6.0/bio/fastqc"
+        f"{snakemake_wrappers_version}/bio/fastqc"
