@@ -1,4 +1,4 @@
-rule bwameth_index:
+rule bwameth_mapping:
     input:
         idx="bwameth/index",
         r1="trim_galore/reads/{sample}_R1.fq.gz",

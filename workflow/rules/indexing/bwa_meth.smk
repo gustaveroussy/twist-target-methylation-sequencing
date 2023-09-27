@@ -1,4 +1,4 @@
-rule bwameth_mapping:
+rule bwameth_index:
     input:
         fasta_path,
     output:
