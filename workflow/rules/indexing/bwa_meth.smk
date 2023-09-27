@@ -5,8 +5,8 @@ rule bwameth_index:
         temp(directory("bwameth/index")),
     threads: config.get("max_threads", 20)
     resources:
-        mem_mb=lambda wildcards, attempt: (attempt * 5 * 1024) + (1024 * 45),
-        runtime=lambda wildcards, attempt: (attempt * 60) + 90,
+        mem_mb=lambda wildcards, attempt: (attempt * 20 * 1024) + (1024 * 45),
+        runtime=lambda wildcards, attempt: (attempt * 45) + 90,
         tmpdir=tmpdir,
     log:
         "logs/bwameth/index.log",
