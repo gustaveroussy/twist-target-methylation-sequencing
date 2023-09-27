@@ -1,13 +1,15 @@
 rule bwameth_mapping:
     input:
-        idx="bwameth/index",
+        idx=bwameth_indexes,
+        fasta=fasta_path,
+        fai=fasta_index_path,
         r1="trim_galore/reads/{sample}_R1.fq.gz",
         r2="trim_galore/reads/{sample}_R2.fq.gz",
     output:
         temp("bwameth/mapping/{sample}.sam"),
     threads: config.get("max_threads", 20)
     resources:
-        mem_mb=lambda wildcards, attempt: (attempt * 20 * 1024) + (1024 * 45),
+        mem_mb=lambda wildcards, attempt: (attempt * 20 * 1024) + (1024 * 126),
         runtime=lambda wildcards, attempt: (attempt * 45) + 90,
         tmpdir=tmpdir,
     log:
@@ -17,4 +19,4 @@ rule bwameth_mapping:
     conda:
         "../../envs/bwameth.yaml"
     shell:
-        "bwameth.py --reference {input.idx} -t {threads} {params.extra} {input.r1} {input.r2} > {log} 2>&1"
+        "bwameth.py --reference {input.fasta} -t {threads} {params.extra} {input.r1} {input.r2} > {log} 2>&1"

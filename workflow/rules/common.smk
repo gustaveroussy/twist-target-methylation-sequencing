@@ -36,6 +36,17 @@ fasta_index_path: str = f"reference/{species}.{build}.{release}.fasta.fai"
 fasta_dict_path: str = f"reference/{species}.{build}.{release}.dict"
 
 
+bwameth_indexes: str = multiext(
+    f"reference/{species}.{build}.{release}.fasta",
+    ".bwameth.c2t",
+    ".bwameth.c2t.0123",
+    ".bwameth.c2t.amb",
+    ".bwameth.c2t.ann",
+    ".bwameth.c2t.bwt.2bit.64",
+    ".bwameth.c2t.pac",
+)
+
+
 def get_picard_bed_to_interval_list_input(
     wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config
 ) -> Dict[str, str]:
