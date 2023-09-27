@@ -9,7 +9,7 @@ if config == {}:
     configfile: "config/config.yaml"
 
 
-design_path = config.get("design", "config/desig.tsv")
+design_path: str = config.get("design", "config/desig.tsv")
 design: pandas.DataFrame = pandas.read_csv(
     filepath_or_buffer=design_path,
     sep="\t",
@@ -18,7 +18,8 @@ design: pandas.DataFrame = pandas.read_csv(
 )
 design["Sample_id"] = design.index.tolist()
 
-tmpdir = os.environ.get("tmp", "tmp")
+tmpdir: str = os.environ.get("tmp", "tmp")
+tmp: str = tmpdir
 snakemake_wrappers_version: str = "v2.6.0"
 
 ################################
