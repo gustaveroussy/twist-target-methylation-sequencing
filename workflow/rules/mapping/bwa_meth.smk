@@ -9,7 +9,7 @@ rule bwameth_mapping:
         temp("bwameth/mapping/{sample}.sam"),
     threads: config.get("max_threads", 20)
     resources:
-        mem_mb=lambda wildcards, attempt: (attempt * 20 * 1024) + (1024 * 126),
+        mem_mb=lambda wildcards, attempt: (attempt * 20 * 1024) + (1024 * 30),
         runtime=lambda wildcards, attempt: (attempt * 45) + 90,
         tmpdir=tmpdir,
     log:
