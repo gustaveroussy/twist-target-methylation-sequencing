@@ -90,7 +90,7 @@ def get_methylation_targets(
     Return methylation analysis results
     """
     expected_targets = {}
-    steps = config.get("steps", {"install": False, "mapping": True})
+    steps = config.get("steps", {"install": False, "mapping": True, "calling": True})
     if steps.get("install", False):
         expected_targets["fasta"] = fasta_path
         expected_targets["fasta_index"] = fasta_index_path
