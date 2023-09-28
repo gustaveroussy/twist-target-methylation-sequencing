@@ -19,4 +19,4 @@ rule bwameth_mapping:
     conda:
         "../../envs/bwameth.yaml"
     shell:
-        "bwameth.py --reference {input.fasta} -t {threads} {params.extra} {input.r1} {input.r2} > {log} 2>&1"
+        "bwameth.py --reference {input.fasta} -t {threads} {params.extra} {input.r1} {input.r2} > {output} 2> {log}"
