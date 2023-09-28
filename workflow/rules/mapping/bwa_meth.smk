@@ -15,7 +15,7 @@ rule bwameth_mapping:
     log:
         "logs/bwameth/mapping/{sample}.log",
     params:
-        extra="--read-group '@RG\{sample}:1\tPL:illumina\tLB:{sample}\tSM:{sample}'",
+        extra="--read-group '@RG\tID:{sample}\tPL:illumina\tLB:{sample}\tSM:{sample}'",
     conda:
         "../../envs/bwameth.yaml"
     shell:
