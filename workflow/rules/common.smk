@@ -9,7 +9,7 @@ if config == {}:
     configfile: "config/config.yaml"
 
 
-design_path = config.get("design", "config/desig.tsv")
+design_path: str = config.get("design", "config/desig.tsv")
 design: pandas.DataFrame = pandas.read_csv(
     filepath_or_buffer=design_path,
     sep="\t",
@@ -18,7 +18,8 @@ design: pandas.DataFrame = pandas.read_csv(
 )
 design["Sample_id"] = design.index.tolist()
 
-tmpdir = os.environ.get("tmp", "tmp")
+tmpdir: str = os.environ.get("tmp", "tmp")
+tmp: str = tmpdir
 snakemake_wrappers_version: str = "v2.6.0"
 
 ################################
@@ -33,6 +34,17 @@ release: str = config.get("reference", {}).get("release", "109")
 fasta_path: str = f"reference/{species}.{build}.{release}.fasta"
 fasta_index_path: str = f"reference/{species}.{build}.{release}.fasta.fai"
 fasta_dict_path: str = f"reference/{species}.{build}.{release}.dict"
+
+
+bwameth_indexes: str = multiext(
+    f"reference/{species}.{build}.{release}.fasta",
+    ".bwameth.c2t",
+    ".bwameth.c2t.0123",
+    ".bwameth.c2t.amb",
+    ".bwameth.c2t.ann",
+    ".bwameth.c2t.bwt.2bit.64",
+    ".bwameth.c2t.pac",
+)
 
 
 def get_picard_bed_to_interval_list_input(
@@ -78,7 +90,7 @@ def get_methylation_targets(
     Return methylation analysis results
     """
     expected_targets = {}
-    steps = config.get("steps", {"install": False, "mapping": True})
+    steps = config.get("steps", {"install": False, "mapping": True, "calling": True})
     if steps.get("install", False):
         expected_targets["fasta"] = fasta_path
         expected_targets["fasta_index"] = fasta_index_path

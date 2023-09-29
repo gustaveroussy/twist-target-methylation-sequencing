@@ -29,7 +29,9 @@ rule picard_collect_multiple_metrics:
 
 rule picard_collect_hs_metrics:
     input:
-        ref=fasta_path,
+        reference=fasta_path,
+        reference_fai=fasta_index_path,
+        reference_dict=fasta_dict_path,
         bam="picard/markduplicates/{sample}.bam",
         bait_intervals="picard/bedtointervallist/bait.intervals",
         target_intervals="picard/bedtointervallist/target.intervals",

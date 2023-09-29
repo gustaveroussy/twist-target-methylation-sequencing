@@ -13,4 +13,4 @@ rule rename_input_files_paired:
     conda:
         "../../envs/python.yaml"
     script:
-        "../../scripts/rename.py"
+        "../../scripts/indexing/rename.py"
